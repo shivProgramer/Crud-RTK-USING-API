@@ -1,26 +1,39 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
-import { createUser } from '../features/userDetailSlice';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom"
+import { updateUser } from "../features/userDetailSlice";
+import { useDispatch } from "react-redux";
+import {useNavigate} from "react-router-dom";
+const Update = () => {
+    const [updateData , setUpdateData] = useState(null);
+    const {id} = useParams();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const alluser = useSelector((state)=> state.app.users);
+     
+    useEffect(()=>{
+      if(id){
+        const userdata = alluser.filter((ele)=>ele.id === id);
+        setUpdateData(userdata[0]);
+      }
+    },[])
 
-
-const Creaate = () => {
-    const [users, setUsers] = useState({});
-    const navigate = useNavigate()
-    const dispath = useDispatch();
-    const getUserData = (e) =>{
-        setUsers({...users, [e.target.name]: e.target.value})   
+    const newData = (e)=>{
+        setUpdateData({...updateData , [e.target.name] : e.target.value})
     }
+
+console.log("updateData",updateData);
 
     const handlesubmit = (e)=>{
         e.preventDefault();
-        dispath(createUser(users));
+        dispatch(updateUser(updateData));
         navigate("/read")
-    }
+    }  
+
   return (
     <div>
-          <h2 className="my-2">Fill the data</h2>
-      <form className="w-50 mx-auto my-5" onSubmit={handlesubmit}>
+          <h2 className="my-2">Edit the Data </h2>
+        <form className="w-50 mx-auto my-5" onSubmit={handlesubmit}> 
         <div className="mb-3">
           <label className="form-label">Name</label>
           <input
@@ -28,7 +41,8 @@ const Creaate = () => {
             name="name"
             className="form-control"
             required
-            onChange={getUserData}
+            value={updateData && updateData.name}
+            onChange={newData}
           />
         </div>
         <div className="mb-3">
@@ -38,7 +52,8 @@ const Creaate = () => {
             name="email"
             className="form-control"
             required
-            onChange={getUserData}
+            value={updateData && updateData.email}
+            onChange={newData}
           />
         </div>
         <div className="mb-3">
@@ -48,7 +63,8 @@ const Creaate = () => {
             name="age"
             className="form-control"
             required
-            onChange={getUserData}
+            value={updateData && updateData.age}
+            onChange={newData}
           />
         </div>
         <div className="mb-3">
@@ -58,7 +74,8 @@ const Creaate = () => {
             value="Male"
             type="radio"
             required
-            onChange={getUserData}
+            checked = {updateData && updateData.gender === "Male"}
+            onChange={newData}
           />
           <label className="form-check-label">Male</label>
         </div>
@@ -68,7 +85,8 @@ const Creaate = () => {
             name="gender"
             value="Female"
             type="radio"
-            onChange={getUserData}
+            checked = {updateData && updateData.gender === "Female"}
+            onChange={newData}
           />
           <label className="form-check-label">Female</label>
         </div>
@@ -77,8 +95,9 @@ const Creaate = () => {
           Submit
         </button>
       </form>
+      
   </div>
   )
 }
 
-export default Creaate
+export default Update
