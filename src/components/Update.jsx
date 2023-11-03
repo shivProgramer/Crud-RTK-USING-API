@@ -32,7 +32,7 @@ console.log("updateData",updateData);
 
   return (
     <div>
-          <h2 className="my-2">Edit the Data </h2>
+        <h2 className="my-2">Edit the Data </h2>
         <form className="w-50 mx-auto my-5" onSubmit={handlesubmit}> 
         <div className="mb-3">
           <label className="form-label">Name</label>
@@ -90,7 +90,6 @@ console.log("updateData",updateData);
           />
           <label className="form-check-label">Female</label>
         </div>
-
         <button type="submit" className="btn btn-primary">
           Submit
         </button>

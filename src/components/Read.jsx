@@ -5,10 +5,12 @@ import CustomModel from "./model/CustomModel";
 import { Link } from "react-router-dom";
 
 const Read = () => {
-  const { users, loading } = useSelector((state) => state.app);
   const [showPopup, setShowPopup] = useState(false);
+  const [radioData, setRadioData] = useState("");
+  const { users, loading, searchData } = useSelector((state) => state.app);
   const [id, setId] = useState();
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(showUser());
   }, []);
@@ -22,29 +24,58 @@ const Read = () => {
       {showPopup && <CustomModel id={id} showPopup={setShowPopup} />}
       {/* end */}
       <h2>All data</h2>
-      <input className="form-check-input" name="gender" type="radio" />
+      <input
+        className="form-check-input"
+        name="gender"
+        type="radio"
+        checked={radioData === ""}
+        onChange={(e)=>setRadioData("")}
+      />
       <label className="form-check-label">All</label>
       <input
         className="form-check-input"
         name="gender"
         value="Male"
+        checked={radioData === "Male"}
         type="radio"
+        onChange={(e)=>setRadioData(e.target.value)}
       />
       <label className="form-check-label">Male</label>
       <input
         className="form-check-input"
         name="gender"
         value="Female"
+        checked={radioData === "Female"}
         type="radio"
+        onChange={(e)=>setRadioData(e.target.value)}
+
       />
       <label className="form-check-label">Female</label>
 
       <div>
         {users &&
           users
-            .slice() // Create a shallow copy of the array
+            .filter((ele) => {
+              if (searchData.length === 0) {
+                return ele;
+              } else {
+                return ele.name
+                  .toLowerCase()
+                  .includes(searchData.toLowerCase());
+              }
+            }).filter((ele)=>{
+              if(radioData === "Male"){
+                return ele.gender === radioData;
+              }else if(radioData === "Female"){
+                return ele.gender === radioData;
+              }else if(radioData === "") {
+               return ele
+              }else{
+                return "No Data ";
+              }
+            })
+            .slice()
             .sort((a, b) => {
-              // Assuming 'id' is the property you want to sort by in descending order
               return b.id - a.id;
             })
             .map((data, id) => (
@@ -61,7 +92,9 @@ const Read = () => {
                   >
                     View
                   </button>
-                  <Link to={`/edit/${data.id}`} className="card-link">Edit</Link>
+                  <Link to={`/edit/${data.id}`} className="card-link">
+                    Edit
+                  </Link>
                   <button
                     className="card-link"
                     onClick={() => dispatch(deleteUser(data.id))}
